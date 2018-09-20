@@ -1,4 +1,5 @@
 import * as React from 'react';
+import './BoardDimensionForm.css';
 
 interface IProps {
     handler: (dimension: number) => void,
@@ -19,7 +20,7 @@ export class BoardDimensionForm extends React.Component<IProps, IState> {
 
     public render () {
         return(
-            <div>
+            <div className="board-dimension-form">
                 <input min={1} type="number" value={this.state.currentDimension} onChange={this.setCurrentDimension}/>
             </div>
         );

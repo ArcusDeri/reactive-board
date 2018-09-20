@@ -1,0 +1,34 @@
+.board-setup {
+    padding: 5px;
+}
+
+.setup-box{
+    display: flex;
+    justify-content: space-around;
+}
+
+.board-setup .form-group {
+    width: 20%;
+    background-color: dodgerblue;
+    color: white;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.go-button {
+    display: block;
+    width: 20%;
+    height: 100px;
+    background-color: dodgerblue;
+    border: none;
+    color: white;
+    font-size: 1.5em;
+    transition: background-color 200ms linear;
+}
+
+.go-button:hover {
+    background-color: #78bcff;
+    cursor: pointer;
+}
+

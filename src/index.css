@@ -3,3 +3,8 @@ body {
   padding: 0;
   font-family: Verdana;
 }
+
+.application-content {
+  width: 80%;
+  margin: 0 auto;
+}

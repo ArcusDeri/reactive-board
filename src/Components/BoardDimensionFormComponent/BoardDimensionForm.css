@@ -1,0 +1,6 @@
+.board-dimension-form input[type=number] {
+    text-align: center;
+    font-size: 2em;
+    font-family: inherit;
+    width: 100px;
+}

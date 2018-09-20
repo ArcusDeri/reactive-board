@@ -10,9 +10,11 @@ ReactDOM.render(
   <BrowserRouter>
     <div>
       <Header/>
-      <Switch>
-        <Route path="/" exact={true} component={BoardSetup} />
-      </Switch>
+      <div className="application-content">
+        <Switch>
+          <Route path="/" exact={true} component={BoardSetup} />
+        </Switch>
+      </div>
     </div>
   </BrowserRouter>,
   document.getElementById('root') as HTMLElement

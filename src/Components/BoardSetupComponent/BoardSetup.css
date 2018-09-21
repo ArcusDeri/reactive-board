@@ -18,7 +18,7 @@
 
 .go-button {
     display: block;
-    width: 20%;
+    width: 100%;
     height: 100px;
     background-color: dodgerblue;
     border: none;
@@ -32,3 +32,6 @@
     cursor: pointer;
 }
 
+.setup-box a {
+    width: 20%;
+}

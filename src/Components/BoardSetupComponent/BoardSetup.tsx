@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { BoardDimensionForm } from '../BoardDimensionFormComponent/BoardDimensionForm';
+import { Link } from 'react-router-dom';
 import './BoardSetup.css';
 
 interface IState {
@@ -8,7 +9,8 @@ interface IState {
 }
 
 export class BoardSetup extends React.Component<{}, IState> {
-    public componentDidMount () {
+    constructor (props: any) {
+        super(props);
         this.state = {
             width: 3,
             height: 3
@@ -22,13 +24,13 @@ export class BoardSetup extends React.Component<{}, IState> {
                 <div className="setup-box">
                     <div className="form-group">
                         <h3>Board width:</h3>
-                        <BoardDimensionForm handler={this.updateBoardXDimension} initialSize={3} />
+                        <BoardDimensionForm handler={this.updateBoardXDimension} initialSize={this.state.width} />
                     </div>
                     <div className="form-group">
                         <h3>Board height:</h3>
-                        <BoardDimensionForm handler={this.updateBoardYDimension} initialSize={3} />
+                        <BoardDimensionForm handler={this.updateBoardYDimension} initialSize={this.state.height} />
                     </div>
-                    <button className="go-button">Go</button>
+                    <Link to={{ pathname: '/board', state: { width: this.state.width, height: this.state.height }}}><button className="go-button">Go</button></Link>
                 </div>
             </div>
         );

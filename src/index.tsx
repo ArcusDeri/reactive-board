@@ -9,7 +9,7 @@ import registerServiceWorker from './registerServiceWorker';
 
 ReactDOM.render(
   <BrowserRouter>
-    <div>
+    <div className="page-content">
       <Header/>
       <div className="application-content">
         <Switch>

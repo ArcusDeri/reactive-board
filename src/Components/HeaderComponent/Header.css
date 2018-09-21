@@ -1,8 +1,11 @@
 header {
     background-color: dodgerblue;
     color: white;
-    padding: .5em;
     text-align: center;
+    flex-grow: 0;
+    flex-shrink: 1;
+    flex-basis: auto;
+    width: 100%;
 }
 
 a {

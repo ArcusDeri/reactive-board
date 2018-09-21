@@ -18,15 +18,12 @@ interface IRgbColor{
 }
 
 export class Tile extends React.Component<IProps, IState> {
+    private defaultTileColor: IRgbColor = { r: 30, g: 144, b: 255};
+
     constructor (props: IProps) {
         super(props);
-        const tileColor: IRgbColor = {
-            r: 30,
-            g: 144,
-            b: 255
-        };
         this.state = {
-            backgroundColor: tileColor
+            backgroundColor: this.defaultTileColor,
         };
     }
 
@@ -44,7 +41,19 @@ export class Tile extends React.Component<IProps, IState> {
         );
     }
 
-    private onTileClick = (event: React.MouseEvent<HTMLDivElement>) => {
-        console.log(event.target);
+    private onTileClick = () => this.setState({ backgroundColor: this.generateRandomRGBColor() });
+
+    private generateRandomRGBColor = (): IRgbColor => {
+        const red = this.generateIntegerFromClosedInterval(0, 255);
+        const green = this.generateIntegerFromClosedInterval(0, 255);
+        const blue = this.generateIntegerFromClosedInterval(0, 255);
+        return { r: red, g: green, b: blue };
+    }
+
+    private generateIntegerFromClosedInterval = (min: number, max: number): number => {
+        min = Math.ceil(min);
+        max = Math.floor(max) + 1;
+        const result = Math.random() * (max - min) + min;
+        return Math.floor(result);
     }
 }

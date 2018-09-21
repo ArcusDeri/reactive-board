@@ -41,7 +41,7 @@ export class Tile extends React.Component<IProps, IState> {
         );
     }
 
-    private onTileClick = () => this.setState({ backgroundColor: this.generateRandomRGBColor() });
+    private onTileClick = () => this.toggleRandomColorFor(2);
 
     private generateRandomRGBColor = (): IRgbColor => {
         const red = this.generateIntegerFromClosedInterval(0, 255);
@@ -55,5 +55,14 @@ export class Tile extends React.Component<IProps, IState> {
         max = Math.floor(max) + 1;
         const result = Math.random() * (max - min) + min;
         return Math.floor(result);
+    }
+
+    private toggleRandomColorFor = (seconds: number) => {
+        this.setState({ backgroundColor: this.generateRandomRGBColor() })
+        setTimeout(this.reset, seconds * 1000);
+    }
+
+    private reset = () => {
+        this.setState({backgroundColor: this.defaultTileColor});
     }
 }

@@ -27,7 +27,10 @@ export class BoardDimensionForm extends React.Component<IProps, IState> {
     }
 
     private setCurrentDimension (event: React.FormEvent<HTMLInputElement>):void {
-        const { value }: any = event.target;
+        let { value }: any = event.target;
+        if(value.length === 0){
+            value = 0;
+        }
         this.setState({currentDimension: parseInt(value,10)}, () => this.props.handler(this.state.currentDimension));
     }
 }

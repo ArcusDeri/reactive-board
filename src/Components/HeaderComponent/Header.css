@@ -7,16 +7,3 @@ header {
     flex-basis: auto;
     width: 100%;
 }
-
-a {
-    text-decoration: none;
-}
-
-a:visited {
-    color: white;
-    text-decoration: none;
-}
-
-a:active {
-    color: white;
-}

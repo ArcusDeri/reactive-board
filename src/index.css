@@ -29,3 +29,19 @@ body {
   width: 80%;
   align-items: stretch;
 }
+
+
+
+a {
+  color: white;
+  text-decoration: none;
+}
+
+a:visited {
+  color: white;
+  text-decoration: none;
+}
+
+a:active {
+  color: white;
+}

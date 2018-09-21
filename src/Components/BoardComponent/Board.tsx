@@ -10,21 +10,20 @@ interface IState {
 }
 
 interface IPropsLocation {
-    state: IState
+    state?: IState
 }
 
 export class Board extends React.Component<IProps, IState> {
     constructor(props: IProps){
         super(props);
-        this.state = props.location.state;
+        this.state = props.location.state ? props.location.state : {width: 3, height: 3};
     }
 
     public render () {
         return(
-            <div>
-                <h1>wow</h1>
-                <h2>{this.state.width}</h2>
-                <h2>{this.state.height}</h2>
+            <div className="board-container">
+                {this.state.height}
+                {this.state.width}
             </div>
         );
     }

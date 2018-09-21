@@ -11,12 +11,3 @@
     flex-flow: row wrap;
     position: relative;
 }
-
-.board-tile {
-    margin: 5px;
-    background-color: dodgerblue;
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}

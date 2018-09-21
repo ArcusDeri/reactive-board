@@ -1,0 +1,13 @@
+
+.board-tile {
+    margin: 5px;
+    background-color: dodgerblue;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.board-tile:hover {
+    cursor: pointer;
+}

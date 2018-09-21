@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Tile } from '../TileComponent/Tile';
 import './Board.css';
 
 interface IProps {
@@ -35,17 +36,12 @@ export class Board extends React.Component<IProps, IState> {
 
     private createTiles = () =>{
         const tileWidth = Math.floor(100 / this.state.width);
-        const tileStyle = {
-            flex: `1 1 calc(${tileWidth}% - 10px)`,
-            fontSize: tileWidth * 15 + "%"
-        }
+        
         for (let y = 0; y < this.state.height; y++) {
             this.tiles.push([]);
             for (let x = 0; x < this.state.width; x++){
-                this.tiles[y].push(
-                    <div className="board-tile" style={tileStyle} key={`${x}${y}`}>
-                        {y}{x}
-                    </div>);
+                const tileKey = x + " " + y;
+                this.tiles[y].push(<Tile key={tileKey} width={tileWidth} x={x} y={y}/>);
             }
         }
         return this.tiles;

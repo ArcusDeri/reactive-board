@@ -8,7 +8,8 @@ interface IProps {
 }
 
 interface IState {
-    backgroundColor: IRgbColor
+    backgroundColor: IRgbColor,
+    timeout: number
 }
 
 interface IRgbColor{
@@ -24,6 +25,7 @@ export class Tile extends React.Component<IProps, IState> {
         super(props);
         this.state = {
             backgroundColor: this.defaultTileColor,
+            timeout: 0
         };
     }
 
@@ -39,6 +41,11 @@ export class Tile extends React.Component<IProps, IState> {
                 {this.props.y}{this.props.x}
             </div>
         );
+    }
+
+    public reset = () => {
+        this.setState({ backgroundColor: this.defaultTileColor });
+        this.clearColorTimeoutIfExists();
     }
 
     private onTileClick = () => this.toggleRandomColorFor(2);
@@ -58,11 +65,16 @@ export class Tile extends React.Component<IProps, IState> {
     }
 
     private toggleRandomColorFor = (seconds: number) => {
+        this.clearColorTimeoutIfExists();
         this.setState({ backgroundColor: this.generateRandomRGBColor() })
-        setTimeout(this.reset, seconds * 1000);
+        const newTimeout: any = setTimeout(this.reset, seconds * 1000);
+        this.setState({ timeout: newTimeout });
     }
 
-    private reset = () => {
-        this.setState({backgroundColor: this.defaultTileColor});
+    private clearColorTimeoutIfExists = () => {
+        if(this.state.timeout > 0){
+            clearTimeout(this.state.timeout);
+            this.setState({ timeout: 0 });
+        }
     }
 }

@@ -42,6 +42,10 @@ export class Tile extends React.Component<IProps, IState> {
             </div>
         );
     }
+    
+    public componentWillUnmount () {
+        this.clearColorTimeoutIfExists();
+    }
 
     public reset = () => {
         this.setState({ backgroundColor: this.defaultTileColor });

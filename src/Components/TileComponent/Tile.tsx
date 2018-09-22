@@ -2,13 +2,13 @@ import * as React from 'react';
 import './Tile.css';
 
 interface IProps {
-    width: number,
-    x: number,
-    y: number
+    dimensions: IDimensions,
+    width: number
 }
 
 interface IState {
     backgroundColor: IRgbColor,
+    tileWidth: number,
     timeout: number
 }
 
@@ -18,6 +18,11 @@ interface IRgbColor{
     b: number
 }
 
+interface IDimensions {
+    x: number,
+    y: number
+}
+
 export class Tile extends React.Component<IProps, IState> {
     private defaultTileColor: IRgbColor = { r: 30, g: 144, b: 255};
 
@@ -25,6 +30,7 @@ export class Tile extends React.Component<IProps, IState> {
         super(props);
         this.state = {
             backgroundColor: this.defaultTileColor,
+            tileWidth: Math.floor(100 / props.dimensions.x),
             timeout: 0
         };
     }
@@ -38,7 +44,7 @@ export class Tile extends React.Component<IProps, IState> {
         };
         return (
             <div className="board-tile" style={tileStyle} onClick={this.onTileClick}>
-                {this.props.y}{this.props.x}
+                {this.props.dimensions.y}{this.props.dimensions.x}
             </div>
         );
     }

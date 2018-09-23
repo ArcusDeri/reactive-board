@@ -3,7 +3,8 @@ import './Tile.css';
 
 interface IProps {
     dimensions: IDimensions,
-    width: number
+    width: number,
+    onColorChange: (color: IRgbColor, x: number, y: number) => void
 }
 
 interface IState {
@@ -12,7 +13,7 @@ interface IState {
     timeout: number
 }
 
-interface IRgbColor{
+export interface IRgbColor{
     r: number,
     g: number,
     b: number
@@ -23,8 +24,10 @@ interface IDimensions {
     y: number
 }
 
+export const defaultTileColor = { r: 30, g: 144, b: 255 };
+
 export class Tile extends React.Component<IProps, IState> {
-    private defaultTileColor: IRgbColor = { r: 30, g: 144, b: 255};
+    public defaultTileColor: IRgbColor = { r: 30, g: 144, b: 255};
 
     constructor (props: IProps) {
         super(props);
@@ -55,6 +58,7 @@ export class Tile extends React.Component<IProps, IState> {
 
     public reset = () => {
         this.setState({ backgroundColor: this.defaultTileColor });
+        this.props.onColorChange(this.defaultTileColor, this.props.dimensions.x, this.props.dimensions.y);
         this.clearColorTimeoutIfExists();
     }
 
@@ -75,8 +79,10 @@ export class Tile extends React.Component<IProps, IState> {
     }
 
     private toggleRandomColorFor = (seconds: number) => {
+        const randomColor = this.generateRandomRGBColor();
         this.clearColorTimeoutIfExists();
-        this.setState({ backgroundColor: this.generateRandomRGBColor() })
+        this.setState({ backgroundColor: randomColor })
+        this.props.onColorChange(randomColor, this.props.dimensions.x, this.props.dimensions.y);
         const newTimeout: any = setTimeout(this.reset, seconds * 1000);
         this.setState({ timeout: newTimeout });
     }

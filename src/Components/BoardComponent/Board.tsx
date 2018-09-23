@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Tile } from '../TileComponent/Tile';
-import { ResetButton } from './ResetButtonComponent/ResetButon';
+import { Tile, IRgbColor, defaultTileColor } from '../TileComponent/Tile';
+import { BoardButton } from './BoardButtonComponent/BoardButton';
 import './Board.css';
 import { isNull } from 'util';
 
@@ -21,10 +21,12 @@ export class Board extends React.Component<IProps, IState> {
 
     private tiles = new Array();
     private tilesReferences = new Array<Array<Tile | null>>();
+    private tilesStates: any;
 
     constructor(props: IProps){
         super(props);
         this.state = props.location.state ? props.location.state : {width: 3, height: 3};
+        this.tilesStates = [];
     }
 
     public render () {
@@ -34,7 +36,10 @@ export class Board extends React.Component<IProps, IState> {
                     {this.createTiles()}
                 </div>
                 <div onClick={this.resetTiles}>
-                    <ResetButton />
+                    <BoardButton displayText="Reset"/>
+                </div>
+                <div onClick={this.displayJSON}>
+                    <BoardButton displayText="JSON"/>
                 </div>
             </div>
         );
@@ -45,11 +50,13 @@ export class Board extends React.Component<IProps, IState> {
         
         for (let y = 0; y < this.state.height; y++) {
             this.tiles.push([]);
+            this.tilesStates.push([]);
             this.tilesReferences.push(new Array<Tile>());
             for (let x = 0; x < this.state.width; x++){
                 const tileKey = x + " " + y;
                 const dims = {x, y};
-                this.tiles[y].push(<Tile ref={(tile) => this.tilesReferences[y].push(tile)} key={tileKey} width={tileWidth} dimensions={dims}/>);
+                this.tilesStates[y].push( defaultTileColor );
+                this.tiles[y].push(<Tile ref={(tile) => this.tilesReferences[y].push(tile)} key={tileKey} width={tileWidth} dimensions={dims} onColorChange={this.updateColorOfXY}/>);
             }
         }
         return this.tiles;
@@ -62,4 +69,10 @@ export class Board extends React.Component<IProps, IState> {
             }
         }));
     }
+
+    private updateColorOfXY = (color: IRgbColor, x: number, y: number) => {
+        this.tilesStates[y][x] = {r: color.r, g: color.g, b: color.b};
+    }
+
+    private displayJSON = () => alert(JSON.stringify(this.tilesStates));
 }

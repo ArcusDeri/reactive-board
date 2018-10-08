@@ -35,11 +35,16 @@ export class Board extends React.Component<IProps, IState> {
                 <div className="tiles">
                     {this.createTiles()}
                 </div>
-                <div onClick={this.resetTiles}>
-                    <BoardButton displayText="Reset"/>
-                </div>
-                <div onClick={this.displayJSON}>
-                    <BoardButton displayText="JSON"/>
+                <div>
+                    <div onClick={this.resetTiles}>
+                        <BoardButton displayText="Reset"/>
+                    </div>
+                    <div onClick={this.displayJSON}>
+                        <BoardButton displayText="To JSON"/>
+                    </div>
+                    <div onClick={this.promptJSON}>
+                        <BoardButton displayText="Load JSON"/>
+                    </div>
                 </div>
             </div>
         );
@@ -75,4 +80,15 @@ export class Board extends React.Component<IProps, IState> {
     }
 
     private displayJSON = () => alert(JSON.stringify(this.tilesStates));
+
+    private promptJSON = () => {
+        let loadedColors: IRgbColor[][];
+        try {
+            const jsonState = prompt('Insert JSON:');
+            loadedColors = JSON.parse(jsonState ? jsonState : JSON.stringify(this.tilesStates));
+            console.log(loadedColors);
+        } catch (error) {
+            console.error(error);
+        }
+    }
 }

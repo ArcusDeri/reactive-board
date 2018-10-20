@@ -4,7 +4,8 @@ import './Tile.css';
 interface IProps {
     dimensions: IDimensions,
     width: number,
-    onColorChange: (color: IRgbColor, x: number, y: number) => void
+    onColorChange: (color: IRgbColor, x: number, y: number) => void,
+    color: IRgbColor
 }
 
 interface IState {
@@ -32,7 +33,7 @@ export class Tile extends React.Component<IProps, IState> {
     constructor (props: IProps) {
         super(props);
         this.state = {
-            backgroundColor: this.defaultTileColor,
+            backgroundColor: props.color,
             tileWidth: Math.floor(100 / props.dimensions.x),
             timeout: 0
         };

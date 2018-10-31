@@ -5,19 +5,15 @@ import './Board.css';
 import { isNull } from 'util';
 
 interface IProps {
-    location: IPropsLocation
+    location: ILocationProps
 }
 
 interface IState {
-    width: number,
-    height: number,
-    jsxTiles: JSX.Element[][],
-    refs: Tile[][],
-    backgrounds: IRgbColor[][]
+    tiles: boolean[][];
 }
 
-interface IPropsLocation {
-    state?: IState
+interface ILocationProps {
+    state?: { width: number, height: number }
 }
 
 export class Board extends React.Component<IProps, IState> {
@@ -30,11 +26,7 @@ export class Board extends React.Component<IProps, IState> {
         const initialHeight = props.location.state ? props.location.state.height : Board.defaultBoardSize;
 
         this.state = {
-            width: initialWidth,
-            height: initialHeight,
-            jsxTiles: this.createEmptyRows<JSX.Element>(initialHeight),
-            refs: this.createEmptyRows<Tile>(initialHeight),
-            backgrounds: this.createEmptyRows<IRgbColor>(initialHeight)
+            tiles: [...Array(initialWidth)].map(() => Array(initialHeight).fill(false))
         }
     }
 
@@ -46,7 +38,9 @@ export class Board extends React.Component<IProps, IState> {
         return(
             <div className="board">
                 <div className="tiles">
-                    {this.getTiles()}
+                    {this.state.tiles.map((row, r)=><div key={r}>
+                        {row.map((cell, c)=><Tile key={c} color={cell?{r: 100, g: 100, b: 0}:{r:255, g: 255, b: 255}} onClick={() => this.onTileClicked(r, c)}/>)}
+                    </div>)}
                 </div>
                 <div>
                     <div onClick={this.resetTiles}>
@@ -61,6 +55,12 @@ export class Board extends React.Component<IProps, IState> {
                 </div>
             </div>
         );
+    }
+
+    private onTileClicked(x : number, y : number) {
+        this.setState(s => ({
+            tiles: this.toggleCell(s, y, x)
+        }));
     }
 
     private getTiles = () => { 
@@ -88,7 +88,7 @@ export class Board extends React.Component<IProps, IState> {
                         key={tileKey} 
                         width={tileWidth} 
                         dimensions={dims} 
-                        onColorChange={this.updateColorOfXY}
+                        onClick={this.updateColorOfXY}
                         color={backgrounds[y][x]}
                     />
                 );
@@ -140,5 +140,9 @@ export class Board extends React.Component<IProps, IState> {
         } catch (error) {
             console.error(error);
         }
+    }
+
+    private toggleCell(s: Readonly<IState>, y: number, x: number): boolean[][] {
+        return s.tiles.map((row, r) => r !== y ? row : row.map((cell, c) => c !== x ? cell : !cell));
     }
 }

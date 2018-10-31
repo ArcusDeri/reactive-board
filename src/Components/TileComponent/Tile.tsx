@@ -4,7 +4,7 @@ import './Tile.css';
 interface IProps {
     dimensions: IDimensions,
     width: number,
-    onColorChange: (color: IRgbColor, x: number, y: number) => void,
+    onClick: (color: IRgbColor, x: number, y: number) => void,
     color: IRgbColor
 }
 
@@ -59,7 +59,7 @@ export class Tile extends React.Component<IProps, IState> {
 
     public reset = () => {
         this.setState({ backgroundColor: this.defaultTileColor });
-        this.props.onColorChange(this.defaultTileColor, this.props.dimensions.x, this.props.dimensions.y);
+        this.props.onClick(this.defaultTileColor, this.props.dimensions.x, this.props.dimensions.y);
         this.clearColorTimeoutIfExists();
     }
 
@@ -83,7 +83,7 @@ export class Tile extends React.Component<IProps, IState> {
         const randomColor = this.generateRandomRGBColor();
         this.clearColorTimeoutIfExists();
         this.setState({ backgroundColor: randomColor })
-        this.props.onColorChange(randomColor, this.props.dimensions.x, this.props.dimensions.y);
+        this.props.onClick(randomColor, this.props.dimensions.x, this.props.dimensions.y);
         const newTimeout: any = setTimeout(this.reset, seconds * 1000);
         this.setState({ timeout: newTimeout });
     }

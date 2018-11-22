@@ -30,7 +30,7 @@ export class BoardSetup extends React.Component<{}, IState> {
                         <h3>Board height:</h3>
                         <BoardDimensionForm handler={this.updateBoardYDimension} initialSize={this.state.height} />
                     </div>
-                    <Link to={{ pathname: '/board', state: { width: this.state.width, height: this.state.height }}}><button className="go-button">Go</button></Link>
+                    <Link to={{ pathname: '/board', state: { columnCount: this.state.width, rowCount: this.state.height }}}><button className="go-button">Go</button></Link>
                 </div>
             </div>
         );

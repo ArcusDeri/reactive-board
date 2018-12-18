@@ -1,4 +1,5 @@
 import * as React from 'react';
+import IRgbColor from '../../Model/IRgbColor';
 import './Tile.css';
 
 interface IProps {
@@ -7,23 +8,17 @@ interface IProps {
     text: string
 }
 
-export interface IRgbColor{
-    r: number,
-    g: number,
-    b: number
-}
-
 export const defaultTileColor = { r: 30, g: 144, b: 255 };
 
 export const Tile: React.SFC<IProps> = (props: IProps) => (
-    <div className="board-tile" style={buildTileStyle(props.color)}>
+    <div className="board-tile" style={buildTileStyle(props.color, props.width)}>
         {props.text}
     </div>
 );
-const buildTileStyle = (color: IRgbColor) => {
+const buildTileStyle = (color: IRgbColor, basis: number) => {
     const styles = {
-        flex: `1 1 20px`,
-        fontSize: "15%",
+        flexBasis: basis + "%",
+        fontSize: "1.5em",
         backgroundColor: `rgb(${color.r},${color.g},${color.b})`  
     };
     return styles;

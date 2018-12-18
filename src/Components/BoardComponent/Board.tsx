@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Tile, defaultTileColor } from '../TileComponent/Tile';
 import { BoardButton } from './BoardButtonComponent/BoardButton';
+import IRgbColor from '../../Model/IRgbColor';
 import './Board.css';
 
 interface IProps {
@@ -8,7 +9,7 @@ interface IProps {
 }
 
 interface IState {
-    tileClickStates: boolean[][];
+    tileColorMatrix: IRgbColor[][];
     columnCount: number,
     rowCount: number
 }
@@ -27,16 +28,16 @@ export class Board extends React.Component<IProps, IState> {
         this.state = {
             columnCount,
             rowCount,
-            tileClickStates: this.createInitialClickStates(rowCount, columnCount)
+            tileColorMatrix: this.createInitialColorsMatrix(rowCount, columnCount)
         }
     }
 
-    public createInitialClickStates = (rowCount: number, columnCount: number) => {
-        const states: boolean[][] = [];
+    public createInitialColorsMatrix = (rowCount: number, columnCount: number): IRgbColor[][] => {
+        const states: IRgbColor[][] = [];
         for (let i = 0; i < rowCount; i++) {
             states.push([]);
             for (let j = 0; j < columnCount; j++) {
-                states[i].push(false);
+                states[i].push(defaultTileColor);
             }
         }
         return states;
@@ -47,7 +48,12 @@ export class Board extends React.Component<IProps, IState> {
         return(
             <div className="board">
                 <div className="tiles">
-                    <Tile color={defaultTileColor} text="01" width={100}/>
+                    {this.state.tileColorMatrix.map((colorsRow, keyY) =>
+                        colorsRow.map((color, keyX) => {
+                            const key = `${keyY}${keyX}`;
+                            return <Tile color={color} key={key} text={key} width={Math.floor(100/this.state.columnCount)-1}/>
+                        })
+                    )}
                 </div>
                 <div>
                     <div>

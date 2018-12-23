@@ -17,6 +17,7 @@ interface IState {
 export class Board extends React.Component<IProps, IState> {
     private defaultColumnCount = 3;
     private defaultRowCount = 3;
+    private timeouts: any[][];
 
     constructor (props: IProps) {
         super(props);
@@ -24,7 +25,8 @@ export class Board extends React.Component<IProps, IState> {
         const rowCountFromProps = props.location.state.rowCount;
         const columnCount = columnCountFromProps ? columnCountFromProps : this.defaultColumnCount;
         const rowCount = rowCountFromProps ? rowCountFromProps : this.defaultRowCount;
-        
+        this.timeouts = new Array(rowCount).fill(null).map(x => new Array(columnCount).fill(null));
+
         this.state = {
             columnCount,
             rowCount,
@@ -62,7 +64,7 @@ export class Board extends React.Component<IProps, IState> {
                     )}
                 </div>
                 <div>
-                    <div>
+                    <div onClick={this.resetAllTiles}>
                         <BoardButton displayText="Reset"/>
                     </div>
                     <div>
@@ -92,13 +94,20 @@ export class Board extends React.Component<IProps, IState> {
     };
 
     private resetAtXYDelayed = (x: number, y: number): void => {
-        setTimeout(() => {
+        clearTimeout(this.timeouts[y][x])
+        this.timeouts[y][x] = setTimeout(() => {
             const matrix = this.cloneColorMatrix();
             matrix[y][x] = defaultTileColor;
             this.setState({
                 tileColorMatrix: matrix
             });
-        }, 1000);
+        }, 2000);
+    };
+
+    private resetAllTiles = (): void => {
+        this.setState({
+            tileColorMatrix: this.createInitialColorsMatrix(this.state.rowCount, this.state.columnCount)
+        })
     };
 
     private generateIRgbColor = (): IRgbColor => {

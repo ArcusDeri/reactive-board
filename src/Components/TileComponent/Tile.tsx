@@ -5,13 +5,18 @@ import './Tile.css';
 interface IProps {
     width: number,
     color: IRgbColor,
-    text: string
+    text: string,
+    onClick: any
 }
 
 export const defaultTileColor = { r: 30, g: 144, b: 255 };
 
 export const Tile: React.SFC<IProps> = (props: IProps) => (
-    <div className="board-tile" style={buildTileStyle(props.color, props.width)}>
+    <div 
+        className="board-tile" 
+        style={buildTileStyle(props.color, props.width)}
+        onClick={props.onClick}
+    >
         {props.text}
     </div>
 );

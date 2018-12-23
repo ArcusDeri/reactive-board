@@ -44,14 +44,20 @@ export class Board extends React.Component<IProps, IState> {
     };
 
     public render () {
-        console.log(this.state);
         return(
             <div className="board">
                 <div className="tiles">
                     {this.state.tileColorMatrix.map((colorsRow, keyY) =>
                         colorsRow.map((color, keyX) => {
                             const key = `${keyY}${keyX}`;
-                            return <Tile color={color} key={key} text={key} width={Math.floor(100/this.state.columnCount)-1}/>
+                            return (
+                                <Tile 
+                                    color={color}
+                                    key={key} 
+                                    text={key} 
+                                    width={Math.floor(100/this.state.columnCount)-1}
+                                    onClick={this.onTileClick.bind(this, keyX, keyY)}
+                                />)
                         })
                     )}
                 </div>
@@ -69,4 +75,36 @@ export class Board extends React.Component<IProps, IState> {
             </div>
         );
     }
+
+    private onTileClick = (x: number, y: number)=> {
+        const matrix = this.cloneColorMatrix();
+        const newColor = this.generateIRgbColor();
+        matrix[y][x] = newColor;
+        this.setState({
+            tileColorMatrix: matrix
+        })
+        this.resetAtXYDelayed(x, y);
+    };
+
+    private cloneColorMatrix = (): IRgbColor[][] => {
+        const colorsObject = Object.assign({}, this.state.tileColorMatrix);
+        return Object.keys(colorsObject).map(key => colorsObject[key]);
+    };
+
+    private resetAtXYDelayed = (x: number, y: number): void => {
+        setTimeout(() => {
+            const matrix = this.cloneColorMatrix();
+            matrix[y][x] = defaultTileColor;
+            this.setState({
+                tileColorMatrix: matrix
+            });
+        }, 1000);
+    };
+
+    private generateIRgbColor = (): IRgbColor => {
+        const r = Math.floor(Math.random() * 256);
+        const g = Math.floor(Math.random() * 256);
+        const b = Math.floor(Math.random() * 256);
+        return {r, g, b};
+    };
 }

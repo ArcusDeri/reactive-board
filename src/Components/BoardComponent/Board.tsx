@@ -67,10 +67,10 @@ export class Board extends React.Component<IProps, IState> {
                     <div onClick={this.resetAllTiles}>
                         <BoardButton displayText="Reset"/>
                     </div>
-                    <div>
+                    <div onClick={this.displayColorsJson}>
                         <BoardButton displayText="To JSON"/>
                     </div>
-                    <div>
+                    <div onClick={this.setColorsFromJson}>
                         <BoardButton displayText="Load JSON"/>
                     </div>
                 </div>
@@ -107,6 +107,23 @@ export class Board extends React.Component<IProps, IState> {
     private resetAllTiles = (): void => {
         this.setState({
             tileColorMatrix: this.createInitialColorsMatrix(this.state.rowCount, this.state.columnCount)
+        })
+    };
+
+    private displayColorsJson = (): void => {
+        const json = JSON.stringify(this.state.tileColorMatrix);
+        alert(json);
+    };
+
+    private setColorsFromJson = (): void => {
+        const matrixString = prompt("Insert json color matrix: ");
+        if (!matrixString) {
+            return;
+        }
+        const matrix = JSON.parse(matrixString);
+        this.timeouts.forEach(y => y.forEach(x => clearTimeout(x)));
+        this.setState({
+            tileColorMatrix: matrix
         })
     };
 

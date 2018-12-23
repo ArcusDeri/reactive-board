@@ -1,61 +1,76 @@
 import * as React from 'react';
-import { Tile, IRgbColor, defaultTileColor } from '../TileComponent/Tile';
+import { Tile, defaultTileColor } from '../TileComponent/Tile';
 import { BoardButton } from './BoardButtonComponent/BoardButton';
+import IRgbColor from '../../Model/IRgbColor';
 import './Board.css';
-import { isNull } from 'util';
 
 interface IProps {
-    location: IPropsLocation
+    location: any
 }
 
 interface IState {
-    width: number,
-    height: number,
-    jsxTiles: JSX.Element[][],
-    refs: Tile[][],
-    backgrounds: IRgbColor[][]
-}
-
-interface IPropsLocation {
-    state?: IState
+    tileColorMatrix: IRgbColor[][];
+    columnCount: number,
+    rowCount: number
 }
 
 export class Board extends React.Component<IProps, IState> {
+    private defaultColumnCount = 3;
+    private defaultRowCount = 3;
+    private timeouts: any[][];
 
-    private static readonly defaultBoardSize = 3;
-
-    constructor(props: IProps){
+    constructor (props: IProps) {
         super(props);
-        const initialWidth = props.location.state ? props.location.state.width : Board.defaultBoardSize;
-        const initialHeight = props.location.state ? props.location.state.height : Board.defaultBoardSize;
+        const columnCountFromProps = props.location.state.columnCount;
+        const rowCountFromProps = props.location.state.rowCount;
+        const columnCount = columnCountFromProps ? columnCountFromProps : this.defaultColumnCount;
+        const rowCount = rowCountFromProps ? rowCountFromProps : this.defaultRowCount;
+        this.timeouts = new Array(rowCount).fill(null).map(x => new Array(columnCount).fill(null));
 
         this.state = {
-            width: initialWidth,
-            height: initialHeight,
-            jsxTiles: this.createEmptyRows<JSX.Element>(initialHeight),
-            refs: this.createEmptyRows<Tile>(initialHeight),
-            backgrounds: this.createEmptyRows<IRgbColor>(initialHeight)
+            columnCount,
+            rowCount,
+            tileColorMatrix: this.createInitialColorsMatrix(rowCount, columnCount)
         }
     }
 
-    public componentDidMount = () => {
-        this.setBoardElements();
-    }
+    public createInitialColorsMatrix = (rowCount: number, columnCount: number): IRgbColor[][] => {
+        const states: IRgbColor[][] = [];
+        for (let i = 0; i < rowCount; i++) {
+            states.push([]);
+            for (let j = 0; j < columnCount; j++) {
+                states[i].push(defaultTileColor);
+            }
+        }
+        return states;
+    };
 
     public render () {
         return(
             <div className="board">
                 <div className="tiles">
-                    {this.getTiles()}
+                    {this.state.tileColorMatrix.map((colorsRow, keyY) =>
+                        colorsRow.map((color, keyX) => {
+                            const key = `${keyY}${keyX}`;
+                            return (
+                                <Tile 
+                                    color={color}
+                                    key={key} 
+                                    text={key} 
+                                    width={Math.floor(100/this.state.columnCount)-1}
+                                    onClick={this.onTileClick.bind(this, keyX, keyY)}
+                                />)
+                        })
+                    )}
                 </div>
                 <div>
-                    <div onClick={this.resetTiles}>
+                    <div onClick={this.resetAllTiles}>
                         <BoardButton displayText="Reset"/>
                     </div>
-                    <div onClick={this.displayJSON}>
+                    <div onClick={this.displayColorsJson}>
                         <BoardButton displayText="To JSON"/>
                     </div>
-                    <div onClick={this.promptJSON}>
+                    <div onClick={this.setColorsFromJson}>
                         <BoardButton displayText="Load JSON"/>
                     </div>
                 </div>
@@ -63,82 +78,59 @@ export class Board extends React.Component<IProps, IState> {
         );
     }
 
-    private getTiles = () => { 
-        const elements = new Array<JSX.Element>();
-        for (const tiles of this.state.jsxTiles){
-            Array.prototype.push.apply(elements, tiles);
-        }
-        return elements;
-    }
-
-    private setBoardElements = () =>{
-        const tileWidth = Math.floor(100 / this.state.width);
-        const backgrounds = this.state.backgrounds;
-        const jsxTiles = this.state.jsxTiles;
-        const refs = this.state.refs;
-
-        for (let y = 0; y < this.state.height; y++) {
-            for (let x = 0; x < this.state.width; x++){
-                const tileKey = x + " " + y;
-                const dims = {x, y};
-                backgrounds[y][x] = backgrounds[y][x] ? backgrounds[y][x] : defaultTileColor;
-                jsxTiles[y][x] = (
-                    <Tile 
-                        ref={(tile) => refs[y][x] = tile!} 
-                        key={tileKey} 
-                        width={tileWidth} 
-                        dimensions={dims} 
-                        onColorChange={this.updateColorOfXY}
-                        color={backgrounds[y][x]}
-                    />
-                );
-            }
-        }
-        this.setState({backgrounds, jsxTiles, refs})
-    }
-
-    private resetTiles = () => {
-        this.state.refs.forEach(row => row.forEach(tile => {
-            if(!isNull(tile)){
-                tile.reset();
-            }
-        }));
-    }
-
-    private createEmptyRows = <T extends object>(rowCount: number) => {
-        const elements = new Array();
-        for (let i = 0; i < rowCount; i++){
-            elements[i] = new Array<T>();
-        }
-        return elements;
-    }
-
-    private updateColorOfXY = (color: IRgbColor, x: number, y: number) => {
-        this.state.backgrounds[y][x] = {r: color.r, g: color.g, b: color.b};
-    }
-
-
-    private buildBoardFromJson = (colors: IRgbColor[][]) => {
+    private onTileClick = (x: number, y: number)=> {
+        const matrix = this.cloneColorMatrix();
+        const newColor = this.generateIRgbColor();
+        matrix[y][x] = newColor;
         this.setState({
-            width: colors[0].length,
-            height: colors.length,
-            backgrounds: colors,
-            jsxTiles: this.createEmptyRows<JSX.Element>(colors.length),
-            refs: this.createEmptyRows<Tile>(colors.length)
-        },this.setBoardElements)
-    }
+            tileColorMatrix: matrix
+        })
+        this.resetAtXYDelayed(x, y);
+    };
 
-    private displayJSON = () => alert(JSON.stringify(this.state.backgrounds));
+    private cloneColorMatrix = (): IRgbColor[][] => {
+        const colorsObject = Object.assign({}, this.state.tileColorMatrix);
+        return Object.keys(colorsObject).map(key => colorsObject[key]);
+    };
 
-    private promptJSON = () => {
-        let loadedColors: IRgbColor[][];
-        try {
-            const jsonState = prompt('Insert JSON:');
-            loadedColors = JSON.parse(jsonState ? jsonState : JSON.stringify(this.state.backgrounds));
-            console.log(loadedColors);
-            this.buildBoardFromJson(loadedColors);
-        } catch (error) {
-            console.error(error);
+    private resetAtXYDelayed = (x: number, y: number): void => {
+        clearTimeout(this.timeouts[y][x])
+        this.timeouts[y][x] = setTimeout(() => {
+            const matrix = this.cloneColorMatrix();
+            matrix[y][x] = defaultTileColor;
+            this.setState({
+                tileColorMatrix: matrix
+            });
+        }, 2000);
+    };
+
+    private resetAllTiles = (): void => {
+        this.setState({
+            tileColorMatrix: this.createInitialColorsMatrix(this.state.rowCount, this.state.columnCount)
+        })
+    };
+
+    private displayColorsJson = (): void => {
+        const json = JSON.stringify(this.state.tileColorMatrix);
+        alert(json);
+    };
+
+    private setColorsFromJson = (): void => {
+        const matrixString = prompt("Insert json color matrix: ");
+        if (!matrixString) {
+            return;
         }
-    }
+        const matrix = JSON.parse(matrixString);
+        this.timeouts.forEach(y => y.forEach(x => clearTimeout(x)));
+        this.setState({
+            tileColorMatrix: matrix
+        })
+    };
+
+    private generateIRgbColor = (): IRgbColor => {
+        const r = Math.floor(Math.random() * 256);
+        const g = Math.floor(Math.random() * 256);
+        const b = Math.floor(Math.random() * 256);
+        return {r, g, b};
+    };
 }
